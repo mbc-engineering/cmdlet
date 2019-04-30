@@ -15,22 +15,23 @@ using System.Management.Automation.Provider;
 using System.Threading.Tasks;
 using static MongoDbGridFsProvider.ConsoleMessage;
 
-/// <summary>
-/// Class represents a Windows-Powershell provides to handle a GridFs (Filesystem) from a MongoDb Database.
-/// </summary>
 namespace MongoDbGridFsProvider
 {
+    /// <summary>
+    /// Class represents a Windows-Powershell provider to handle a GridFs (Filesystem) from a MongoDb Database.
+    /// </summary>
     [CmdletProvider("MongoDb", ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.Credentials | ProviderCapabilities.ExpandWildcards)]
     public class MongoProvider : NavigationCmdletProvider
     {
         #region Property
+
         internal MongoDriveInfo Drive
         {
             get
             {
                 var drive = PSDriveInfo as MongoDriveInfo;
 
-                if (null == drive)
+                if (drive == null)
                 {
                     drive = ProviderInfo.Drives.FirstOrDefault() as MongoDriveInfo;
                 }
@@ -38,6 +39,7 @@ namespace MongoDbGridFsProvider
                 return drive;
             }
         }
+        
         #endregion
 
         #region Private methods
@@ -183,7 +185,7 @@ namespace MongoDbGridFsProvider
             var item = items.First();
             WriteItemObject(item, item.Id.ToString(), false);
 
-            if(!string.IsNullOrEmpty(param.Target))
+            if (!string.IsNullOrEmpty(param.Target))
             {
                 //Load content to filesystem
                 var stream = DownloadFile(fs, item.Id);
@@ -196,6 +198,7 @@ namespace MongoDbGridFsProvider
         {
             return false; //Need false to enable 'RemoveItem' command.
         }
+
         protected override void RemoveItem(string path, bool recurse)
         {
             var desc = string.Format($"This will remove the document '{ path }' from collection '{ Drive.DriveParameters.Collection }' in database '{ Drive.DriveParameters.Database }'.");

@@ -1,8 +1,16 @@
-﻿using System;
+﻿//-----------------------------------------------------------------------------
+// Copyright (c) 2019 by mbc engineering GmbH, CH-6015 Luzern
+// Licensed under the Apache License, Version 2.0
+//-----------------------------------------------------------------------------
+
+using System;
 
 namespace MongoDbGridFsProvider
 {
-    class ConsoleMessage
+    /// <summary>
+    /// Class to handle messages to the powershell-console.
+    /// </summary>
+    internal class ConsoleMessage
     {
         public enum MessageType
         {
@@ -10,6 +18,7 @@ namespace MongoDbGridFsProvider
             Info,
             Error,
         }
+
         internal static void WriteToConsole(MessageType type, string message)
         {
             switch (type)

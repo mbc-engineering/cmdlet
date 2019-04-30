@@ -1,10 +1,17 @@
-﻿using MongoDB.Driver;
-using System;
+﻿//-----------------------------------------------------------------------------
+// Copyright (c) 2019 by mbc engineering GmbH, CH-6015 Luzern
+// Licensed under the Apache License, Version 2.0
+//-----------------------------------------------------------------------------
+
+using MongoDB.Driver;
 using System.Text;
 
 namespace MongoDbGridFsProvider
 {
-    class Context
+    /// <summary>
+    /// Class to handle powershell context.
+    /// </summary>
+    internal class Context
     {
         public MongoProvider Provider { get; private set; }
         public object DynamicParameters { get; private set; }
@@ -16,10 +23,12 @@ namespace MongoDbGridFsProvider
             DynamicParameters = dynamicParameters;
             MongoClient = client;
         }
-
     }
 
-    static class Paths
+    /// <summary>
+    /// Helper-class to build a pathes.
+    /// </summary>
+    internal static class Paths
     {
         internal static string Create(Context context, string databaseName, string collection)
         {
@@ -38,7 +47,7 @@ namespace MongoDbGridFsProvider
             {
                 builder.AppendFormat("/{0}", collectionName);
             }
-            
+
             return builder.ToString();
         }
     }

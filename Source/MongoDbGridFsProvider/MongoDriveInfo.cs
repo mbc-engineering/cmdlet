@@ -1,10 +1,18 @@
-﻿using MongoDB.Driver;
+﻿//-----------------------------------------------------------------------------
+// Copyright (c) 2019 by mbc engineering GmbH, CH-6015 Luzern
+// Licensed under the Apache License, Version 2.0
+//-----------------------------------------------------------------------------
+
+using MongoDB.Driver;
 using MongoDB.Driver.Core.Configuration;
 using MongoDB.Driver.GridFS;
 using System.Management.Automation;
 
 namespace MongoDbGridFsProvider
 {
+    /// <summary>
+    /// A Windows-Powershell DriveInfo to work with a MongoDb-GridFs.
+    /// </summary>
     internal class MongoDriveInfo : PSDriveInfo
     {
         public MongoProviderParameters DriveParameters { get; private set; }
@@ -22,8 +30,6 @@ namespace MongoDbGridFsProvider
         internal MongoClient CreateMongoClient(MongoProvider provider)
         {
             var cxn = BuildMongoConnectionString(DriveParameters);
-            var client = new MongoClient(cxn);
-            var db = client.GetDatabase(DriveParameters.Database);
             return new MongoClient(cxn);
         }
 
@@ -31,7 +37,8 @@ namespace MongoDbGridFsProvider
         {
             var cxn = BuildMongoConnectionString(DriveParameters);
             var db = new MongoClient(cxn).GetDatabase(DriveParameters.Database);
-            return new GridFSBucket(db, new GridFSBucketOptions {
+            return new GridFSBucket(db, new GridFSBucketOptions
+            {
                 BucketName = DriveParameters.Collection
             });
         }
@@ -43,10 +50,10 @@ namespace MongoDbGridFsProvider
             {
                 credentialString = $"{credential.UserName}:{credential.Password}@";
             }
-            
+
             var host = driveParameters.Host;
             var port = driveParameters.Port;
-            
+
             var connectionString = $"mongodb://{credentialString}{host}:{port}";
 
             return new ConnectionString(connectionString).ToString();

@@ -1,3 +1,8 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) 2019 by mbc engineering GmbH, CH-6015 Luzern
+// Licensed under the Apache License, Version 2.0
+//-----------------------------------------------------------------------------
+
 using Microsoft.Deployment.WindowsInstaller;
 using System;
 using System.Collections.Generic;
@@ -7,13 +12,14 @@ using System.Management.Automation;
 
 namespace mbc.Wix
 {
+    /// <summary>
+    /// Custom actions for install/uninstall process.
+    /// </summary>
     public static class InstallPowerShellModuleCa
     {
         [CustomAction]
         public static ActionResult DeferredInstallPowerShellModule(Session session)
         {
-            // For debuging while setup uncoment
-            // System.Diagnostics.Debugger.Launch();
             session.Log("Begin to install powerShell module into all user profile");
 
             var psInstaller = CreatePsInstaller(session);
@@ -33,8 +39,6 @@ namespace mbc.Wix
         [CustomAction]
         public static ActionResult DeferredUnInstallPowerShellModule(Session session)
         {
-            // For debuging while setup uncoment
-            // System.Diagnostics.Debugger.Launch();
             session.Log("Begin to uninstall powerShell module form all user profile");
 
             var psInstaller = CreatePsInstaller(session);
