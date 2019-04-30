@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <!--xmlns="http://schemas.microsoft.com/wix/2006/wi"-->
+
+    <!-- Help links:
+  - introduction video: https://www.youtube.com/watch?v=s9oqh4FrAKo
+  - msi property reference with default variables: https://docs.microsoft.com/en-us/windows/desktop/msi/property-reference
+  - Project reference variables: http://wixtoolset.org/documentation/manual/v3/votive/votive_project_references.html
+  - real life example: https://helgeklein.com/blog/2014/09/real-world-example-wix-msi-application-installer/#directory-structure
+  - samples: https://github.com/rstropek/Samples
+  - sample blog: https://weblogs.sqlteam.com/mladenp/2010/02/11/wix-3-tutorial-solutionproject-structure-and-dev-resources/
+  - sample harvesting files: https://www.codeproject.com/Articles/1107786/%2FArticles%2F1107786%2FEnabling-Harvest-Heat-exe-in-a-Wix-Setup-Project
+  - heatdirectory Task parameters: http://wixtoolset.org/documentation/manual/v3/msbuild/task_reference/heatdirectory.html
+  - binding definitions like !(bind.packageManufacturer.MyProduct): http://wixtoolset.org/documentation/manual/v3/overview/light.html
+  -->
+
+    <!--#####################################
+     Includes, Defines & Variables 
+     ######################################-->
+  <?include $(sys.CURRENTDIR)Includes/DefinitionsPlatform.wxi ?>
+  <?define ProductVersion = "$(var.BuildVersion)"?>
+  <?define CompanyName = "mbc-engineering"?>
+  <?define UpgradeCode = "5692F738-6C94-4C95-B07C-9B1C1BCF18B9"?>
+
+  <!--#####################################
+     Product definition
+     ######################################-->
+	<Product Id="*" 
+           Name="mbc DevTools" 
+           Language="1031"
+           Version="$(var.ProductVersion)"
+           Manufacturer="mbc-engineering GmbH"
+           UpgradeCode="$(var.UpgradeCode)">
+    
+		<Package InstallerVersion="500" 
+             Compressed="yes" 
+             InstallScope="perMachine"
+             Description="Different developer tools from mbc-engineering GmbH."
+             Comments="(c) mbc-engineering GmbH"
+             Manufacturer="mbc-engineering GmbH"/>
+
+		<MediaTemplate EmbedCab="yes" />
+
+    <!-- Correct upgrade handling -> disallow install old version, stay same version, override with new version -->
+    <Upgrade Id="$(var.UpgradeCode)">
+      <!-- Detect older product versions -->
+      <UpgradeVersion OnlyDetect="yes"
+                      IncludeMinimum="yes"
+                      IncludeMaximum="yes"
+                      Minimum="0.0.1"
+                      Maximum="$(var.ProductVersion)"
+                      Property="PREVIOUSVERSIONSINSTALLED"/>
+      <!-- Detect newer product versions -->
+      <UpgradeVersion OnlyDetect="yes"
+                      IncludeMinimum="yes"
+                      Minimum="$(var.ProductVersion)"
+                      Property="NEWERVERSIONDETECTED"/>
+    </Upgrade>
+    <!-- Exits successfully in the case newer version are already installed -->
+    <CustomActionRef Id="WixExitEarlyWithSuccess"/>
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+
+    <!--######################################
+        Setup UI customization 
+        ######################################-->
+    <!-- Set the icon to show next to the program name in Windows Add/Remove programs -->
+    <Icon Id="favicon.ico" SourceFile="$(sys.CURRENTDIR)Resources/favicon.ico" />
+    <Property Id="ARPPRODUCTICON" Value="favicon.ico" />
+    <!-- Installer UI custom pictures. -->
+    <WixVariable Id="WixUIBannerBmp" Value="$(sys.CURRENTDIR)Resources/mbcBanner.png" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(sys.CURRENTDIR)Resources/mbcBackground.png" />
+    <WixVariable Id="WixUILicenseRtf" Value="EULA.rtf" />
+    <UI>
+      <UIRef Id="WixUI_FeatureTree"/>
+      <Publish Dialog="WelcomeDlg"
+               Control="Next"
+               Event="NewDialog"
+               Value="LicenseAgreementDlg"
+               Order="99">1</Publish>
+      <Publish Dialog="LicenseAgreementDlg" 
+               Control="Back" 
+               Event="NewDialog" 
+               Value="CustomizeDlg">1</Publish>
+      <Publish Dialog="CustomizeDlg"
+               Control="Back"
+               Event="NewDialog"
+               Value="WelcomeDlg"
+               Order="99">1</Publish>
+    </UI>    
+
+    <!--###################################### 
+        Installer Feature list    
+        ######################################-->
+    <!-- CLI feature -->
+    <Feature Id="MongoDbPSProvider"
+             Title="MongoDb-GridFs"
+			       Description="A Windows-PowerShell provider to work with a MongoDb-GridFs."
+             Absent="allow"
+             AllowAdvertise="no"             
+             Level="1">
+      <!-- Cmp_MongoDbPSProvider is generated by Heat Harvesting as BeforeBuild task -->
+      <ComponentGroupRef Id="Cmp_MongoDbPSProvider" />
+    </Feature>
+
+    <!--######################################
+        Installation prerequisite 
+        ######################################-->
+    <!-- <PropertyRef Id="WIX_IS_NETFRAMEWORK_471_OR_LATER_INSTALLED" />
+    <Condition Message="[ProductName] requires Microsoft .Net Framework with minimal version of 4.7.1 to be installed.">
+      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_471_OR_LATER_INSTALLED]]>
+    </Condition>-->
+
+    <!--######################################
+        Installation Custom Actions 
+        ######################################-->
+    <SetProperty Id="CheckPowerShellVersion" Value="MinPowerShellMajorVersion=5" Sequence="execute" Before="InstallInitialize" />
+    <SetProperty Id="InstallPowerShellModule" Value="PowershellModuleLibraryPath=[DIR_MongoDbPSProvider]$(var.MongoDbGridFsProvider.TargetFileName);MinPowerShellMajorVersion=5" Sequence="execute" Before="InstallInitialize" />
+    <SetProperty Id="UnInstallPowerShellModule" Value="PowershellModuleLibraryPath=[DIR_MongoDbPSProvider]$(var.MongoDbGridFsProvider.TargetFileName);MinPowerShellMajorVersion=5" Sequence="execute" Before="InstallInitialize" />
+
+    <InstallExecuteSequence>
+      <Custom Action="CheckPowerShellVersion" Before="InstallFiles">
+        <![CDATA[&MongoDbPSProvider=3 AND (Installed="" OR REINSTALL<>"") AND PREVIOUSVERSIONSINSTALLED=""]]>
+      </Custom>
+      <Custom Action="InstallPowerShellModule" Before="InstallFinalize">
+        <![CDATA[&MongoDbPSProvider=3 AND (Installed="" OR REINSTALL<>"") AND PREVIOUSVERSIONSINSTALLED=""]]>
+      </Custom>
+      <Custom Action="UnInstallPowerShellModule" Before="RemoveFiles">
+        <![CDATA[&MongoDbPSProvider=2 AND REMOVE="ALL" AND PREVIOUSVERSIONSINSTALLED=""]]>
+      </Custom>
+    </InstallExecuteSequence>
+    
+	</Product>
+
+  <!--######################################
+      Directory structure
+      ######################################-->
+	<Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.PlatformProgramFilesFolder)">
+        <Directory Id="ManufacturerFolder" Name="$(var.CompanyName)" >
+          <Directory Id="DIR_MongoDbPSProvider" Name ="MongoDbPsProvider"/>
+        </Directory>
+      </Directory>
+    </Directory>
+	</Fragment>
+</Wix>

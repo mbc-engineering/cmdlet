@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" InitialTargets="EnsureWixToolsetInstalled" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\WiX.3.11.1\build\wix.props" Condition="Exists('..\packages\WiX.3.11.1\build\wix.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>3.9</ProductVersion>
+    <ProjectGuid>681d20dd-52fc-4ebd-968a-c948cea26cd9</ProjectGuid>
+    <SchemaVersion>2.0</SchemaVersion>
+    <OutputName>mbc.DevTools.Setup</OutputName>
+    <OutputType>Package</OutputType>
+    <HarvestNoLogo>true</HarvestNoLogo>
+    <HarvestVerboseOutput>true</HarvestVerboseOutput>
+    <HarvestAutogenerateGuids>true</HarvestAutogenerateGuids>
+    <HarvestSupressFragments>true</HarvestSupressFragments>
+    <HarvestSuppressUniqueIds>true</HarvestSuppressUniqueIds>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <Name>mbc.DevTools.Setup</Name>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>bin\$(Configuration)\$(Platform)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\$(Platform)\</IntermediateOutputPath>
+    <OutputName>mbc.DevTools.Setup_x86</OutputName>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\$(Configuration)\$(Platform)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\$(Platform)\</IntermediateOutputPath>
+    <OutputName>mbc.DevTools.Setup_x86</OutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>bin\$(Configuration)\$(Platform)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\$(Platform)\</IntermediateOutputPath>
+    <OutputName>mbc.DevTools.Setup_x64</OutputName>
+    <DefineConstants>Debug</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>bin\$(Configuration)\$(Platform)\</OutputPath>
+    <IntermediateOutputPath>obj\$(Configuration)\$(Platform)\</IntermediateOutputPath>
+    <OutputName>mbc.DevTools.Setup_x64</OutputName>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Fragments\MongoDbProvider\MongoDbProviderFiles.wxs" />
+    <Compile Include="Fragments\MongoDbProvider\MongoDbProviderPsModule.wxs" />
+    <Compile Include="Product.wxs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Fragments\" />
+    <Folder Include="Fragments\MongoDbProvider\" />
+    <Folder Include="Includes" />
+    <Folder Include="Resources" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="EULA.rtf" />
+    <Content Include="Fragments\MongoDbProvider\MongoDbProviderFilesFilter.xslt" />
+    <Content Include="Includes\DefinitionsPlatform.wxi" />
+    <Content Include="packages.config" />
+    <Content Include="Resources\favicon.ico" />
+    <Content Include="Resources\mbcBackground.png" />
+    <Content Include="Resources\mbcBanner.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\mbc.Wix\mbc.Wix.csproj">
+      <Name>mbc.Wix</Name>
+      <Project>{a1b7bfc1-f80d-4a46-ba9e-f5fb25af6d25}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+    <ProjectReference Include="..\MongoDbGridFsProvider\MongoDbGridFsProvider.csproj">
+      <Name>MongoDbGridFsProvider</Name>
+      <Project>{11ef5d77-6825-4f4f-9e3b-699b64afd14a}</Project>
+      <Private>True</Private>
+      <DoNotHarvest>True</DoNotHarvest>
+      <RefProjectOutputGroups>Binaries;Content;Satellites</RefProjectOutputGroups>
+      <RefTargetDir>INSTALLFOLDER</RefTargetDir>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WixExtension Include="WixUtilExtension">
+      <HintPath>$(WixExtDir)\WixUtilExtension.dll</HintPath>
+      <Name>WixUtilExtension</Name>
+    </WixExtension>
+    <WixExtension Include="WixUIExtension">
+      <HintPath>$(WixExtDir)\WixUIExtension.dll</HintPath>
+      <Name>WixUIExtension</Name>
+    </WixExtension>
+  </ItemGroup>
+  <Import Project="$(WixTargetsPath)" Condition=" Exists('$(WixTargetsPath)') " />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\WiX.3.11.1\build\wix.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WiX.3.11.1\build\wix.props'))" />
+  </Target>
+  <Target Name="EnsureWixToolsetInstalled" Condition=" !Exists('$(WixTargetsPath)') ">
+    <Error Text="The WiX Toolset v4 build tools must be installed to build this project. To download the WiX Toolset v4, see http://wixtoolset.org/releases/" />
+  </Target>
+  <Target Name="AfterResolveReferences">
+    <!-- Set Build Version from exe assembly version -->
+    <GetAssemblyIdentity AssemblyFiles="..\MongoDbGridFsProvider\bin\$(Configuration)\MongoDbGridFsProvider.dll">
+      <Output TaskParameter="Assemblies" ItemName="AssemblyVersion" />
+    </GetAssemblyIdentity>
+    <PropertyGroup>
+      <!-- Define constant for using in wix-->
+      <DefineConstants>$(DefineConstants);BuildVersion=%(AssemblyVersion.Version)</DefineConstants>
+      <!-- Define varialbe for using in csproj afterbuild-->
+      <BuildVersion>%(AssemblyVersion.Version)</BuildVersion>
+    </PropertyGroup>
+    <!-- harvest wxs file from folder of CliFiles project -->
+    <HeatDirectory OutputFile="$(ProjectDir)\Fragments\MongoDbProvider\MongoDbProviderFiles.wxs" Directory="..\MongoDbGridFsProvider\bin\$(Configuration)" Transforms="$(ProjectDir)\Fragments\MongoDbProvider\MongoDbProviderFilesFilter.xslt" ComponentGroupName="Cmp_MongoDbPSProvider" DirectoryRefId="DIR_MongoDbPSProvider" AutogenerateGuids="true" PreprocessorVariable="var.MongoDbGridFsProvider.TargetDir" SuppressRegistry="true" SuppressRootDirectory="true" ToolPath="$(WixToolPath)" NoLogo="true" />
+  </Target>
+  <Target Name="AfterBuild">
+    <!-- Add the Version to the builded MSI -->
+    <Copy SourceFiles=".\bin\$(Configuration)\$(Platform)\$(OutputName).msi" DestinationFiles=".\bin\$(Configuration)\$(Platform)\$(OutputName)v$(BuildVersion).msi" />
+    <Delete Files=".\bin\$(Configuration)\$(Platform)\$(OutputName).msi" />
+  </Target>
+</Project>

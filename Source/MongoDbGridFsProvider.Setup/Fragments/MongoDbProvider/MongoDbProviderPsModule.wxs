@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <!-- defines the entry points of custom action -->
+    <CustomAction Id="InstallPowerShellModule"
+                  BinaryKey="mbcWix.CA"
+                  DllEntry="DeferredInstallPowerShellModule"
+                  Execute="deferred"
+                  Return="check"
+                  Impersonate="no" />
+    <!-- example to set the property values <Property Id="InstallPowerShellModule" Value="Name=World install;foo=bar" />-->
+
+    <CustomAction Id="UnInstallPowerShellModule"
+                  BinaryKey="mbcWix.CA"
+                  DllEntry="DeferredUnInstallPowerShellModule"
+                  Execute="deferred"
+                  Return="check"
+                  Impersonate="no" />
+    <!--example to set the property values <Property Id="UnInstallPowerShellModule" Value="Name=World uninstall" />-->
+
+    <!-- defines the entry points of custom action -->
+    <CustomAction Id="CheckPowerShellVersion"
+                  BinaryKey="mbcWix.CA"
+                  DllEntry="DeferredCheckPowerShellVersion"
+                  Execute="deferred"
+                  Return="check"
+                  Impersonate="no" />
+    <!--example to set the property values <Property Id="CheckPowerShellVersion" Value="MinPowerShellMajorVersion=5" />-->
+
+    <Binary Id="mbcWix.CA" SourceFile="$(var.mbc.Wix.TargetDir)$(var.mbc.Wix.TargetName).CA.dll" />
+  </Fragment>
+</Wix>

@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.28803.156
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDbGridFsProvider", "MongoDbGridFsProvider\MongoDbGridFsProvider.csproj", "{11EF5D77-6825-4F4F-9E3B-699B64AFD14A}"
 EndProject
-Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "MongoDbGridFsProvider.Setup", "MongoDbGridFsProvider.Setup\MongoDbGridFsProvider.Setup.wixproj", "{681D20DD-52FC-4EBD-968A-C948CEA26CD9}"
+Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "mbc.DevTools.Setup", "MongoDbGridFsProvider.Setup\mbc.DevTools.Setup.wixproj", "{681D20DD-52FC-4EBD-968A-C948CEA26CD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mbc.Wix2", "mbc.Wix2\mbc.Wix2.csproj", "{A1B7BFC1-F80D-4A46-BA9E-F5FB25AF6D25}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mbc.Wix", "mbc.Wix\mbc.Wix.csproj", "{A1B7BFC1-F80D-4A46-BA9E-F5FB25AF6D25}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

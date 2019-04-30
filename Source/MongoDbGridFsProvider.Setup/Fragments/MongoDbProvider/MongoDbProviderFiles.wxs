@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Fragment>
+        <DirectoryRef Id="DIR_MongoDbPSProvider" />
+    </Fragment>
+    <Fragment>
+        <ComponentGroup Id="Cmp_MongoDbPSProvider">
+            <Component Id="cmpC3973D1C0B959CC8D7A498A39047BDD2" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil913BA3C582A9A8F1F8BB1CCAB13C66FC" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\DnsClient.dll" />
+            </Component>
+            <Component Id="cmpFD1502DC9AE94AD396A8DCB8C8E4CE94" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil50054C55BB33029B8B35D07C58E3673F" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\MongoDB.Bson.dll" />
+            </Component>
+            <Component Id="cmp1976B3C87BA5B13A79A9F911740C4240" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil4CE6BB45752619559A8BAA06166DC874" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\MongoDB.Driver.Core.dll" />
+            </Component>
+            <Component Id="cmp4F22D422ED7B2D9DA263B2E7BDCF303E" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="filC7484570DB6EA8FEB1C2D198130823F4" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\MongoDB.Driver.dll" />
+            </Component>
+            <Component Id="cmpCED4CC1B11268C0DB8F06F7A01E4BDBB" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="filFFDB1B3B5F31BE16CDE6713AA5F021C0" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\MongoDB.Driver.GridFS.dll" />
+            </Component>
+            <Component Id="cmp16B287CF39120EFB64CF7DEB53A196BA" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil019D461F7753173F2C90E741646C1BAF" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\MongoDB.Driver.Legacy.dll" />
+            </Component>
+            <Component Id="cmpD715C1C94AE7E590C99D354C99D3640C" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil719267529D5B3711AE2560FBEEC4EC7F" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\MongoDbGridFsProvider.dll" />
+            </Component>
+            
+            <Component Id="cmp2427DC4BCD5A2BB5B0B0616EFA2B82DF" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil5EA34C97DF1B1891D20B9F954917EA5E" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Buffers.dll" />
+            </Component>
+            <Component Id="cmp2226986EDE1D2A08580B165CB2066A49" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="filC527F9FE410DFD1815692AA08CDD5867" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Data.Common.dll" />
+            </Component>
+            <Component Id="cmpAB31339DC7A162EC50BA91684EC2828B" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="filC5FD7380ADB07DCA534A5A4D53B16777" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Diagnostics.StackTrace.dll" />
+            </Component>
+            <Component Id="cmpF0674A851AB1C0357F31E9C7CE372B46" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil24C229F25E1580E4E645939EF8E943AA" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Diagnostics.Tracing.dll" />
+            </Component>
+            <Component Id="cmp28F81DCAFE85072DCDDD31FDD75FF356" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil9106D5D86BC7F1119A70CE306BC8D310" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Globalization.Extensions.dll" />
+            </Component>
+            <Component Id="cmp20244765F39C0D1B50EA582C62B5E64C" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="filABDEEAF8D4B6631AA0A376031B912A43" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.IO.Compression.dll" />
+            </Component>
+            <Component Id="cmp3D0330FA2E89FD25BB9C631241B41891" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil2A510A471F5A3D5FEB844404511B3FCD" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Management.Automation.dll" />
+            </Component>
+            <Component Id="cmpBEF3F879BD1287499084863D8BB4BFA6" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="filE48B96F2FEAAA3654272A4614A2CCCA9" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Net.Http.dll" />
+            </Component>
+            <Component Id="cmp5F3FD872C300F074E67B371CFED60D1F" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="filA4D58FE2909EF5DBC109C1FFA471A88B" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Net.Sockets.dll" />
+            </Component>
+            <Component Id="cmpCA65456465D54BA89B5822F1D434CCCF" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil8BFFBB5E4ED024A514D0A11081F5A65A" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Runtime.Serialization.Primitives.dll" />
+            </Component>
+            <Component Id="cmp37FF97C7A2CB954359D3E69CBDBA6AE7" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="filFB8C75A99BC1C7F5AF685736BDEA1583" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Security.Cryptography.Algorithms.dll" />
+            </Component>
+            <Component Id="cmpE8981B4C16F05FF5A7AB11DE16EC726D" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil256A19AFC599816164940CC2E6C7A679" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Security.SecureString.dll" />
+            </Component>
+            <Component Id="cmp9090857B44A0CA1B7515F4BE5F242772" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil4C988E6298AA42E96FD95847C3249497" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Threading.Overlapped.dll" />
+            </Component>
+            <Component Id="cmpDC8B39C9F19A6BE7D0532A5232492600" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="fil4428AE3DE5C6B021B0F4D9A8B79BB8F5" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Xml.XPath.XDocument.dll" />
+            </Component>
+        </ComponentGroup>
+    </Fragment>
+</Wix>
