@@ -15,8 +15,9 @@ namespace MongoDbGridFsProvider
     /// </summary>
     internal class MongoDriveInfo : PSDriveInfo
     {
-        public MongoProviderParameters DriveParameters { get; private set; }
         private readonly string GridFsDefaultBucketName = "fs"; //default bucketname by mongodb
+
+        public MongoProviderParameters DriveParameters { get; private set; }
 
         internal MongoDriveInfo(MongoProviderParameters driveParameters, PSDriveInfo drive) : base(drive)
         {

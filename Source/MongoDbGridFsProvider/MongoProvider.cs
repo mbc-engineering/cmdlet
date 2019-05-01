@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-using System.Threading.Tasks;
 using static MongoDbGridFsProvider.ConsoleMessage;
 
 namespace MongoDbGridFsProvider
@@ -20,7 +19,7 @@ namespace MongoDbGridFsProvider
     /// <summary>
     /// Class represents a Windows-Powershell provider to handle a GridFs (Filesystem) from a MongoDb Database.
     /// </summary>
-    [CmdletProvider("MongoDb", ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.Credentials | ProviderCapabilities.ExpandWildcards)]
+    [CmdletProvider("MongoDbGridFs", ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.Credentials | ProviderCapabilities.ExpandWildcards)]
     public class MongoProvider : NavigationCmdletProvider
     {
         #region Property
@@ -39,7 +38,7 @@ namespace MongoDbGridFsProvider
                 return drive;
             }
         }
-        
+
         #endregion
 
         #region Private methods
@@ -49,12 +48,7 @@ namespace MongoDbGridFsProvider
             var fileName = Path.GetFileName(path);
             using (var stream = File.OpenRead(path))
             {
-                var t = Task.Run<ObjectId>(() =>
-                {
-                    return fs.UploadFromStreamAsync(fileName, stream);
-                });
-
-                return t.Result;
+                return fs.UploadFromStream(fileName, stream);
             }
         }
 
@@ -171,15 +165,13 @@ namespace MongoDbGridFsProvider
             if (!items.Any())
             {
                 // File not found
-                WriteToConsole(MessageType.Error, $"File not found in database.");
-                return;
+                ThrowTerminatingError(new ErrorRecord(new FileNotFoundException($"File '{path}' not found in database"), "FileNotFound", ErrorCategory.ObjectNotFound, null));
             }
 
             if (items.Count() != 1)
             {
                 // Multiple files found
-                WriteToConsole(MessageType.Error, $"File exists multiple times in the database. Use the unic ID property to specify.");
-                return;
+                ThrowTerminatingError(new ErrorRecord(new ArgumentException($"File exists multiple times in the database. Use the unique ID property for specificatioin."), "MultiNames", ErrorCategory.InvalidArgument, null));
             }
 
             var item = items.First();
