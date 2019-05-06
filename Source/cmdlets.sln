@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mbc.Wix", "mbc.Wix\mbc.Wix.
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "mbc.DevTools.Setup", "mbc.DevTools.Setup\mbc.DevTools.Setup.wixproj", "{681D20DD-52FC-4EBD-968A-C948CEA26CD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDbGridFsProvider.Test", "MongoDbGridFsProvider.Test\MongoDbGridFsProvider.Test.csproj", "{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,18 @@ Global
 		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Release|x64.Build.0 = Release|x64
 		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Release|x86.ActiveCfg = Release|x86
 		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Release|x86.Build.0 = Release|x86
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Debug|x64.Build.0 = Debug|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Debug|x86.Build.0 = Debug|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Release|x64.ActiveCfg = Release|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Release|x64.Build.0 = Release|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Release|x86.ActiveCfg = Release|Any CPU
+		{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

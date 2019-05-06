@@ -22,6 +22,11 @@ namespace MongoDbGridFsProvider
     [CmdletProvider("MongoDbGridFs", ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.Credentials | ProviderCapabilities.ExpandWildcards)]
     public class MongoProvider : NavigationCmdletProvider
     {
+        public static IReadOnlyList<string> DefaultGridFsFileInfoProperties = new List<string>
+        {
+            "FileName", "Id", "UploadDateTime", "length"
+        }.AsReadOnly();
+
         #region Property
 
         internal MongoDriveInfo Drive
@@ -59,17 +64,6 @@ namespace MongoDbGridFsProvider
             return stream;
         }
 
-        private static PSObject GetDisplayPso(object obj, IEnumerable<string> defaultProperties)
-        {
-            var psObject = new PSObject(obj);
-            psObject.Members.Add(
-                new PSMemberSet("PSStandardMembers", new PSMemberInfo[]
-                {
-                    new PSPropertySet("DefaultDisplayPropertySet", defaultProperties),
-                }));
-            return psObject;
-        }
-
         private void WriteFile(Stream stream, string pathName)
         {
             if (File.Exists(pathName))
@@ -80,6 +74,7 @@ namespace MongoDbGridFsProvider
                     return;
                 }
             }
+
             using (var fileStream = File.Create(pathName))
             {
                 stream.Seek(0, SeekOrigin.Begin);
@@ -227,12 +222,22 @@ namespace MongoDbGridFsProvider
         protected override void GetChildItems(string path, bool recurse)
         {
             var fs = Drive.GetGridFsBucket(this);
-            var result = fs.Find(FilterDefinition<GridFSFileInfo>.Empty).ToEnumerable(); // find any file
+            IEnumerable<GridFSFileInfo> result = fs.Find(FilterDefinition<GridFSFileInfo>.Empty).ToEnumerable(); // find any file
 
             foreach (var r in result)
             {
-                WriteItemObject(GetDisplayPso(r, new[] { "FileName", "Id", "UploadDateTime", "length" }), r.Filename, false);
+                WriteGridFSFileInfoObject(r, r.Filename);
             }
+        }
+
+        private void WriteGridFSFileInfoObject(GridFSFileInfo gridFSFileInfo, string path)
+        {
+            var outputObject = PSObject.AsPSObject(gridFSFileInfo);
+            outputObject.Members.Add(new PSMemberSet("PSStandardMembers", new PSMemberInfo[]
+            {
+                new PSPropertySet("DefaultDisplayPropertySet", DefaultGridFsFileInfoProperties),
+            }));
+            WriteItemObject(outputObject, path, false);
         }
 
         protected override object GetItemDynamicParameters(string path)

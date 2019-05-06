@@ -13,7 +13,7 @@ namespace MongoDbGridFsProvider
     /// <summary>
     /// A Windows-Powershell DriveInfo to work with a MongoDb-GridFs.
     /// </summary>
-    internal class MongoDriveInfo : PSDriveInfo
+    public class MongoDriveInfo : PSDriveInfo
     {
         private readonly string GridFsDefaultBucketName = "fs"; //default bucketname by mongodb
 
