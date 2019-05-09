@@ -128,7 +128,8 @@ namespace MongoDbGridFsProvider.Test
 
             // Act
             ps.AddCommand("Set-Content")
-                .AddParameter("Path", "mongodb:abc")
+                .AddParameter("Path", "mongodb:")
+                .AddParameter("Name", "abc")
                 .AddParameter("Value", "foo")
                 .Invoke();
 

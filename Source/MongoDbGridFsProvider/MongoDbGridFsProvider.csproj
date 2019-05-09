@@ -33,6 +33,9 @@
   <PropertyGroup>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -46,6 +49,7 @@
   <ItemGroup>
     <Compile Include="ConsoleMessage.cs" />
     <Compile Include="Context.cs" />
+    <Compile Include="MongoContentProvider.cs" />
     <Compile Include="MongoProvider.cs" />
     <Compile Include="MongoDriveInfo.cs" />
     <Compile Include="ExtParameters.cs" />

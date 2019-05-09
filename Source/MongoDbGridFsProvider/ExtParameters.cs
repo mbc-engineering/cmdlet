@@ -39,4 +39,13 @@ namespace MongoDbGridFsProvider
         [Parameter(Mandatory = false)]
         public string Name { get; set; }
     }
+
+    /// <summary>
+    /// Class for extended PowerShell-Parameters for a mongo-item (file).
+    /// </summary>
+    public class MongoContentParameters
+    {
+        [Parameter(Mandatory = false)]
+        public string Name { get; set; }
+    }
 }

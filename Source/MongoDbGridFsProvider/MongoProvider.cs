@@ -20,7 +20,7 @@ namespace MongoDbGridFsProvider
     /// Class represents a Windows-Powershell provider to handle a GridFs (Filesystem) from a MongoDb Database.
     /// </summary>
     [CmdletProvider("MongoDbGridFs", ProviderCapabilities.Filter | ProviderCapabilities.ShouldProcess | ProviderCapabilities.Credentials | ProviderCapabilities.ExpandWildcards)]
-    public class MongoProvider : NavigationCmdletProvider
+    public class MongoProvider : NavigationCmdletProvider, IContentCmdletProvider
     {
         public static IReadOnlyList<string> DefaultGridFsFileInfoProperties = new List<string>
         {
@@ -44,6 +44,14 @@ namespace MongoDbGridFsProvider
             }
         }
 
+        private GridFSBucket Bucket
+        {
+            get
+            {
+                return Drive.GetGridFsBucket(this);
+            }
+        }
+
         #endregion
 
         #region Private methods
@@ -51,10 +59,8 @@ namespace MongoDbGridFsProvider
         private static ObjectId UploadFile(GridFSBucket fs, string path)
         {
             var fileName = Path.GetFileName(path);
-            using (var stream = File.OpenRead(path))
-            {
-                return fs.UploadFromStream(fileName, stream);
-            }
+            var file = File.ReadAllBytes(fileName);
+            return fs.UploadFromBytes(fileName, file);
         }
 
         private static Stream DownloadFile(GridFSBucket fs, ObjectId id)
@@ -74,6 +80,7 @@ namespace MongoDbGridFsProvider
                     return;
                 }
             }
+            stream.Seek(0, SeekOrigin.Begin);
 
             using (var fileStream = File.Create(pathName))
             {
@@ -84,9 +91,49 @@ namespace MongoDbGridFsProvider
             WriteToConsole(MessageType.Successful, $"Write file successfully: { pathName }");
         }
 
+        private IEnumerable<GridFSFileInfo> GetFilesInfo(string fileName)
+        {
+            var items = new List<GridFSFileInfo>();
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                // Get file by name               
+                items.AddRange(Bucket.Find(Builders<GridFSFileInfo>.Filter.Eq(x => x.Filename, fileName)).ToEnumerable());
+            }
+
+            return items;
+        }
+
+        private GridFSFileInfo GetFileInfo(ObjectId id)
+        {
+            var items = new List<GridFSFileInfo>();
+            if (id != null)
+            {
+                // Get file by id
+                items.AddRange(Bucket.Find(Builders<GridFSFileInfo>.Filter.Eq("_id", id)).ToEnumerable());
+            }
+
+            if (items.Count() > 1)
+            {
+                // Multiple files found
+                ThrowTerminatingError(new ErrorRecord(new ArgumentException($"File exists multiple times in the database."), "MultiIds", ErrorCategory.InvalidArgument, null));
+            }
+
+            return items.FirstOrDefault();
+        }
+
+        private void WriteGridFSFileInfoObject(GridFSFileInfo gridFSFileInfo, string path)
+        {
+            var outputObject = PSObject.AsPSObject(gridFSFileInfo);
+            outputObject.Members.Add(new PSMemberSet("PSStandardMembers", new PSMemberInfo[]
+            {
+                new PSPropertySet("DefaultDisplayPropertySet", DefaultGridFsFileInfoProperties),
+            }));
+            WriteItemObject(outputObject, path, false);
+        }
+
         #endregion
 
-        #region Overrides
+        #region Overrides NavigationCmdletProvider
 
         protected override bool IsValidPath(string path)
         {
@@ -130,54 +177,28 @@ namespace MongoDbGridFsProvider
             {
                 return true;
             }
-            var fs = Drive.GetGridFsBucket(this);
-            var result = fs.Find(Builders<GridFSFileInfo>.Filter.Eq("_id", new ObjectId(id))).ToEnumerable();
 
+            var result = Bucket.Find(Builders<GridFSFileInfo>.Filter.Eq("_id", new ObjectId(id))).ToEnumerable();
             return result.Any();
         }
 
-        protected override void GetItem(string path)
+        protected override void GetItem(string id)
         {
             if (!(DynamicParameters is MongoItemParameters param))
             {
                 throw new ArgumentException("Expected dynamic parameter of type " + typeof(MongoItemParameters).FullName);
             }
 
-            var fs = Drive.GetGridFsBucket(this);
-
-            var items = new List<GridFSFileInfo>();
-            if (string.IsNullOrEmpty(path) && !string.IsNullOrEmpty(param.Name))
-            {
-                // Get file by name               
-                items.AddRange(fs.Find(Builders<GridFSFileInfo>.Filter.Eq(x => x.Filename, param.Name)).ToEnumerable());
-            }
-            else
-            {
-                // Get file by id
-                items.AddRange(fs.Find(Builders<GridFSFileInfo>.Filter.Eq("_id", new ObjectId(path))).ToEnumerable());
-            }
-
-            if (!items.Any())
-            {
-                // File not found
-                ThrowTerminatingError(new ErrorRecord(new FileNotFoundException($"File '{path}' not found in database"), "FileNotFound", ErrorCategory.ObjectNotFound, null));
-            }
-
-            if (items.Count() != 1)
-            {
-                // Multiple files found
-                ThrowTerminatingError(new ErrorRecord(new ArgumentException($"File exists multiple times in the database. Use the unique ID property for specificatioin."), "MultiNames", ErrorCategory.InvalidArgument, null));
-            }
-
-            var item = items.First();
+            var item = GetFileInfo(new ObjectId(id));
             WriteItemObject(item, item.Id.ToString(), false);
 
             if (!string.IsNullOrEmpty(param.Target))
             {
                 //Load content to filesystem
-                var stream = DownloadFile(fs, item.Id);
+                var stream = DownloadFile(Bucket, item.Id);
                 var targetName = !string.IsNullOrEmpty(param.Target) ? param.Target : !string.IsNullOrEmpty(item.Filename) ? item.Filename.ToString() : item.Id.ToString();
                 WriteFile(stream, targetName);
+                stream.Close();
             }
         }
 
@@ -194,8 +215,7 @@ namespace MongoDbGridFsProvider
             {
                 if (Force || ShouldContinue(warn, "Confirm remove of document"))
                 {
-                    var fs = Drive.GetGridFsBucket(this);
-                    fs.Delete(new ObjectId(path));
+                    Bucket.Delete(new ObjectId(path));
                     WriteToConsole(MessageType.Successful, $"Document removed successfully");
                 }
             }
@@ -203,8 +223,7 @@ namespace MongoDbGridFsProvider
 
         protected override void RenameItem(string path, string newName)
         {
-            var fs = Drive.GetGridFsBucket(this);
-            fs.Rename(new ObjectId(path), newName);
+            Bucket.Rename(new ObjectId(path), newName);
             WriteToConsole(MessageType.Successful, $"Renaming successful");
         }
 
@@ -212,8 +231,7 @@ namespace MongoDbGridFsProvider
         {
             if (File.Exists(path))
             {
-                var fs = Drive.GetGridFsBucket(this);
-                var id = UploadFile(fs, path);
+                var id = UploadFile(Bucket, path);
                 WriteItemObject(new PSObject(id), id.Pid.ToString(), false);
                 WriteToConsole(MessageType.Successful, $"Upload successfully by Id '{ id }'");
             }
@@ -221,23 +239,12 @@ namespace MongoDbGridFsProvider
 
         protected override void GetChildItems(string path, bool recurse)
         {
-            var fs = Drive.GetGridFsBucket(this);
-            IEnumerable<GridFSFileInfo> result = fs.Find(FilterDefinition<GridFSFileInfo>.Empty).ToEnumerable(); // find any file
+            IEnumerable<GridFSFileInfo> result = Bucket.Find(FilterDefinition<GridFSFileInfo>.Empty).ToEnumerable(); // find any file
 
             foreach (var r in result)
             {
                 WriteGridFSFileInfoObject(r, r.Filename);
             }
-        }
-
-        private void WriteGridFSFileInfoObject(GridFSFileInfo gridFSFileInfo, string path)
-        {
-            var outputObject = PSObject.AsPSObject(gridFSFileInfo);
-            outputObject.Members.Add(new PSMemberSet("PSStandardMembers", new PSMemberInfo[]
-            {
-                new PSPropertySet("DefaultDisplayPropertySet", DefaultGridFsFileInfoProperties),
-            }));
-            WriteItemObject(outputObject, path, false);
         }
 
         protected override object GetItemDynamicParameters(string path)
@@ -252,11 +259,82 @@ namespace MongoDbGridFsProvider
 
         protected override string[] ExpandPath(string path)
         {
-            var fs = Drive.GetGridFsBucket(this);
             path = path.Replace('*', '.'); // Powershell wildcard (*) should be (.) in regex
             var regexPattern = $"^{path}.*";
-            var result = fs.Find(Builders<GridFSFileInfo>.Filter.Regex(x => x.Filename, new BsonRegularExpression(regexPattern))).ToEnumerable();
+            var result = Bucket.Find(Builders<GridFSFileInfo>.Filter.Regex(x => x.Filename, new BsonRegularExpression(regexPattern))).ToEnumerable();
             return result.Select(x => x.Id.ToString()).ToArray();
+        }
+
+        #endregion
+
+        #region Override IContentCmdletProvider
+
+        public IContentReader GetContentReader(string id)
+        {
+            if (!(DynamicParameters is MongoContentParameters param))
+            {
+                throw new ArgumentException("Expected dynamic parameter of type " + typeof(MongoContentParameters).FullName);
+            }
+
+            if (string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(param.Name))
+            {
+                GridFSFileInfo newestFile = null;
+                foreach (var entry in GetFilesInfo(param.Name).ToList())
+                {
+                    if (newestFile == null)
+                    {
+                        newestFile = entry;
+                    }
+                    else
+                    {
+                        if (entry.UploadDateTime.Ticks > newestFile.UploadDateTime.Ticks)
+                        {
+                            newestFile = entry;
+                        }
+                    }
+                }
+
+                id = newestFile.Id.ToString();
+            }
+
+            return new MongoReadContentProvider(Bucket, new ObjectId(id));
+        }
+
+        public object GetContentReaderDynamicParameters(string path)
+        {
+            // Default implementation            
+            return new MongoContentParameters();
+        }
+
+        public IContentWriter GetContentWriter(string id)
+        {
+            if (!(DynamicParameters is MongoContentParameters param))
+            {
+                throw new ArgumentException("Expected dynamic parameter of type " + typeof(MongoContentParameters).FullName);
+            }
+
+            if (!string.IsNullOrEmpty(id))
+            {
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException($"MongoDb does not support overwrite a gridfs-entry. Delete existing element first."), "FileAlreadyExist", ErrorCategory.InvalidArgument, null));
+            }
+
+            return new MongoWriteContentProvider(Bucket, param.Name);
+        }
+
+        public object GetContentWriterDynamicParameters(string path)
+        {
+            return new MongoContentParameters();
+        }
+
+        public void ClearContent(string path)
+        {
+            // Nothing to do
+        }
+
+        public object ClearContentDynamicParameters(string path)
+        {
+            // Default implementation
+            return null;
         }
 
         #endregion
