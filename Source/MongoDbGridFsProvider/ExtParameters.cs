@@ -35,9 +35,6 @@ namespace MongoDbGridFsProvider
     {
         [Parameter(Mandatory = false)]
         public string Target { get; set; }
-
-        [Parameter(Mandatory = false)]
-        public string Name { get; set; }
     }
 
     /// <summary>
