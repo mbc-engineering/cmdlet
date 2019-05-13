@@ -1,21 +1,23 @@
-# PowerShell Cmdlets/Providers .NET
+# PowerShell Cmdlets/Providers
 
-This project is an extension for the Windows Powershell and gives the easy possibility to work with a Mongo-GridFs over ps.
-
-
-![PSDrive in Action](Docs/intro.gif)
+Project for extensions like cmdlet or providers for Windows-Powershell.
 
 ## Requirements
 - .Net Framework >= 4.7.1
 - PowerShell >= 5.1
 
-## How to use:
+## MongoDbGridFsProvider
+
+This project is an extension for the Windows-Powershell and gives the easy possibility to work with a [MongoDB-GridFs].
+
+![PSDrive in Action](Docs/intro.gif)
+
+### How to use:
 
 Just run the setup to install and register the provider on your system.
 But if you want to try it first, without installation or as portable version, you can import the MongoDbGridFsProvider.dll with the ```Import-Module``` by your own.
 
-
-### Register PSDrive:
+#### Register PSDrive:
 
 In order to use the provider, you must first register it.
 
@@ -25,7 +27,7 @@ New-PSDrive -Name Mongo -PSProvider MongoDb -Root '' -Host 'localhost' -Database
 
 Now the provider can simply be addressed by its name.
 
-### Get-ChildItem
+#### Get-ChildItem
 
 Returns a list of all existing elements in the registred collection. This command gives a quick overview of existings elements and some meta-inforamtions.
 
@@ -38,7 +40,7 @@ FileName     Id                       UploadDateTime      length
 testFile     5cd92feb5ba2196a6c5f0da2 13.05.2019 08:50:51      1
 ```
 
-### Get-Item
+#### Get-Item
 
 Get a specific item from the collection, given by die objectId.
 
@@ -91,3 +93,10 @@ Example:
 ```powershell
 Set-Content Mongo: -Name foo3.txt -Value "Test content"
 ```
+
+# Legal and Licensing
+
+MongoDbGridFsProvider is under the [Apache License 2.0].
+
+[Apache License 2.0]: http://www.apache.org/licenses/LICENSE-2.0
+[MongoDB-GridFs]:https://docs.mongodb.com/manual/core/gridfs/
