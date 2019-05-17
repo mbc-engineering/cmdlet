@@ -15,12 +15,14 @@ namespace MongoDbGridFsProvider
         [Parameter(Mandatory = true)]
         public string Host { get; set; }
 
+        // #8 - ToDo: insteed of Database Collection use -root in PSDrive
         [Parameter(Mandatory = true)]
         public string Database { get; set; }
 
         [Parameter(Mandatory = false)]
         public int Port { get; set; } = 27017;
 
+        // #8 -ToDo: insteed of Database Collection use -root in PSDrive
         [Parameter(Mandatory = false)]
         public string Collection { get; set; }
 

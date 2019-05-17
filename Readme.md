@@ -1,4 +1,4 @@
-# PowerShell Cmdlets/Providers
+# PowerShell Cmdlets and Providers
 
 Project for extensions like cmdlet or providers for Windows-Powershell.
 
@@ -6,7 +6,7 @@ Project for extensions like cmdlet or providers for Windows-Powershell.
 - .Net Framework >= 4.7.1
 - PowerShell >= 5.1
 
-## MongoDbGridFsProvider
+## MongoDbGridFs Provider
 
 This project is an extension for the Windows-Powershell and gives the easy possibility to work with a [MongoDB-GridFs].
 
@@ -15,17 +15,53 @@ This project is an extension for the Windows-Powershell and gives the easy possi
 ### How to use:
 
 Just run the setup to install and register the provider on your system.
-But if you want to try it first, without installation or as portable version, you can import the MongoDbGridFsProvider.dll with the ```Import-Module``` by your own.
+But if you want to try it first, without installation or as portable version, you can import the `MongoDbGridFsProvider.dll` with the ```Import-Module``` by your own.
+
+Check the `MongoDbGridFs` Provider is correctly installed with 
+```powershell
+> Get-PSProvider
+Name                 Capabilities                                                                                                       Drives
+----                 ------------                                                                                                       ------
+Registry             ShouldProcess, Transactions                                                                                        {HKLM, HKCU}
+Alias                ShouldProcess                                                                                                      {Alias}
+Environment          ShouldProcess                                                                                                      {Env}
+FileSystem           Filter, ShouldProcess, Credentials                                                                                 {C, D, E, H...}
+Function             ShouldProcess                                                                                                      {Function}
+Variable             ShouldProcess                                                                                                      {Variable}
+MongoDbGridFs        Filter, ExpandWildcards, ShouldProcess, Credentials                                                                {NspMongo}
+Certificate          ShouldProcess                                                                                                      {Cert}
+WSMan                Credentials                                                                                                        {WSMan}
+```
 
 #### Register PSDrive:
 
 In order to use the provider, you must first register it.
 
 ```powershell
-New-PSDrive -Name Mongo -PSProvider MongoDb -Root '' -Host 'localhost' -Database 'files' -Collection ''
+> New-PSDrive -PSProvider MongoDbGridFs -Name Mongo -Root '' -Host 'localhost' -Port '27017' -Database 'MyDb' -Collection 'files' -Verify	
 ```
 
 Now the provider can simply be addressed by its name.
+
+> The paramete `-Root` has to be set
+
+> For collection name the sufix `.files` and `.chunkes` must not be set
+
+#### Remove PSDrive:
+
+For listing all existing drive use
+
+```powershell
+> Get-PSDrive -PSProvider MongoDbGridFs
+Name           Used (GB)     Free (GB) Provider      Root                                                                                                                                   
+----           ---------     --------- --------      ----
+Mongo                                  MongoDbGridFs
+```
+
+and then removing it
+```powershell
+> Remove-PSDrive Mongo
+```
 
 #### Get-ChildItem
 
@@ -46,7 +82,14 @@ Get a specific item from the collection, given by die objectId.
 
 Example:
 ```powershell
-Get-Item Mongo:\5cd92feb5ba2196a6c5f0da2
+> Get-Item Mongo:\5cd92feb5ba2196a6c5f0da2
+```
+
+In this way it is easy to store the binary content to a local drive
+
+Example:
+```powershell
+> Get-Item Mongo:\5cd92feb5ba2196a6c5f0da2 -Target c:\temp\content.txt
 ```
 
 #### Set-Item
@@ -55,7 +98,7 @@ Upload an existing file to the collection.
 
 Example for upload foo.txt to the collection:
 ```powershell
-Set-Item Mongo:\foo.txt
+> Set-Item Mongo:\foo.txt
 ```
 
 #### Remove-Item
@@ -64,7 +107,7 @@ Deletes an existing element completely from the collection.
 
 Example:
 ```powershell
-Remove-Item Mongo:\123769231768231876
+> Remove-Item Mongo:\123769231768231876
 ```
 
 #### Rename-Item
@@ -73,7 +116,7 @@ Overwrites the file-name property in the collection of the given element.
 
 Example:
 ```powershell
-Rename-Item Mongo:\93097432780089734 -NewName foo2.txt
+> Rename-Item Mongo:\93097432780089734 -NewName foo2.txt
 ```
 
 #### Get-Content
@@ -82,7 +125,7 @@ Get the content of an existing element from the collection.
 
 Example:
 ```powershell
-Get-Content Mongo:\93097432780089734
+> Get-Content Mongo:\93097432780089734
 ```
 
 #### Set-Content
@@ -91,7 +134,7 @@ Create a new element in the collection with content of the `Value` parameter.
 
 Example:
 ```powershell
-Set-Content Mongo: -Name foo3.txt -Value "Test content"
+> Set-Content Mongo: -Name foo3.txt -Value "Test content"
 ```
 
 # Legal and Licensing

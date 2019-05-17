@@ -160,11 +160,13 @@ namespace MongoDbGridFsProvider
                 var client = mongoDrive.CreateMongoClient(this);
                 try
                 {
+                    // #7 - ToDo: Database and also Collection Check does not work. maybe use new method mongoDrive.CheckConnection()
                     client.GetDatabase(p.Database);
                 }
-                catch (Exception)
+                catch
                 {
-                    WriteInformation(new InformationRecord("A no connection", "B no connection"));
+                    WriteInformation(new InformationRecord("connection is not valid", "connection verification"));
+                    throw;
                 }
             }
 
