@@ -36,6 +36,11 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Windows\SysWOW64\WindowsPowerShell\v1.0\powershell.exe</StartProgram>
+    <StartArguments>-NoProfile -NoExit -Command "$InformationPreference = 'Continue'; Import-Module .\MongoDbGridFsProvider.dll"</StartArguments>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
