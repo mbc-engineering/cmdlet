@@ -59,5 +59,23 @@ namespace MongoDbGridFsProvider
 
             return new ConnectionString(connectionString).ToString();
         }
+
+        internal void CheckConnection()
+        {
+            var cxn = BuildMongoConnectionString(DriveParameters);
+            var db = new MongoClient(cxn);
+
+            // Check if database exist
+            if (!db.ListDatabaseNames().ToList().Contains(DriveParameters.Database))
+            {
+                throw new MongoException($"Database ' { DriveParameters.Database } ' not exists");
+            }
+
+            // Check if collection exist            
+            if (!db.GetDatabase(DriveParameters.Database).ListCollectionNames().ToList().Contains(DriveParameters.Collection))
+            {
+                throw new MongoException($"Collection ' { DriveParameters.Collection } 'not exists");
+            }
+        }
     }
 }
