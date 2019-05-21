@@ -152,6 +152,14 @@ namespace MongoDbGridFsProvider
                 throw new ArgumentException("Expected dynamic parameter of type " + typeof(MongoProviderParameters).FullName);
             }
 
+            drive.CurrentLocation = p.Host;
+            if (!string.IsNullOrEmpty(drive.Root))
+            {
+                var values = drive.Root.Split('\\');
+                p.Database = values[0];
+                p.Collection = values.Length > 1 ? values[1] : string.Empty;
+            }
+
             var mongoDrive = new MongoDriveInfo(p, drive);
 
             if (p.Verify.IsPresent)
