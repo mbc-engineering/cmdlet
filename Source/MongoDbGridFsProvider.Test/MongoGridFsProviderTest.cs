@@ -47,8 +47,7 @@ namespace MongoDbGridFsProvider.Test
             ps.AddCommand("New-PSDrive")
                 .AddParameter("Name", "mongodb")
                 .AddParameter("PSProvider", "MongoDbGridFs")
-                .AddParameter("Root", "")
-                .AddParameter("Host", "localhost")
+                .AddParameter("Root", "localhost")
                 .AddParameter("Port", _mongoClientSettings.Server.Port.ToString())
                 .AddParameter("Database", "foo")
                 .AddParameter("Collection", "")
@@ -112,8 +111,6 @@ namespace MongoDbGridFsProvider.Test
             result.Should().HaveCount(3);
 
             result.Cast<PSObject>()
-                .Select(x => x.ImmediateBaseObject)
-                .Cast<PSObject>()
                 .Select(x => x.ImmediateBaseObject)
                 .Should().AllBeOfType<GridFSFileInfo>()
                 .And.Subject.Cast<GridFSFileInfo>().Select(x => x.Id).Should().BeEquivalentTo(id1, id2, id3);

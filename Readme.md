@@ -38,12 +38,12 @@ WSMan                Credentials                                                
 In order to use the provider, you must first register it.
 
 ```powershell
-> New-PSDrive -PSProvider MongoDbGridFs -Name Mongo -Root '' -Host 'localhost' -Port '27017' -Database 'MyDb' -Collection 'files' -Verify	
+> New-PSDrive -PSProvider MongoDbGridFs -Name Mongo -Root 'localhost' -Port '27017' -Database 'MyDb' -Collection 'files' -Verify	
 ```
 
 Now the provider can simply be addressed by its name.
 
-> The paramete `-Root` has to be set
+> The parameters `-Port` and `-Collection` don't have to be set (default Port='27017' and Collection='fs').
 
 > For collection name the sufix `.files` and `.chunkes` must not be set
 
@@ -53,9 +53,9 @@ For listing all existing drive use
 
 ```powershell
 > Get-PSDrive -PSProvider MongoDbGridFs
-Name           Used (GB)     Free (GB) Provider      Root                                                                                                                                   
+Name           Used (GB)     Free (GB) Provider      Root
 ----           ---------     --------- --------      ----
-Mongo                                  MongoDbGridFs
+Mongo                                  MongoDbGridFs localhost
 ```
 
 and then removing it
