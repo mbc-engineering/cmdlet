@@ -59,7 +59,7 @@ namespace MongoDbGridFsProvider
         private static ObjectId UploadFile(GridFSBucket fs, string path)
         {
             var fileName = Path.GetFileName(path);
-            var file = File.ReadAllBytes(fileName);
+            var file = File.ReadAllBytes(Path.GetFullPath(path));
             return fs.UploadFromBytes(fileName, file);
         }
 
@@ -128,7 +128,7 @@ namespace MongoDbGridFsProvider
             {
                 new PSPropertySet("DefaultDisplayPropertySet", DefaultGridFsFileInfoProperties),
             }));
-            WriteItemObject(outputObject, path, false);
+            WriteItemObject(gridFSFileInfo, path, false);
         }
 
         #endregion
@@ -152,13 +152,9 @@ namespace MongoDbGridFsProvider
                 throw new ArgumentException("Expected dynamic parameter of type " + typeof(MongoProviderParameters).FullName);
             }
 
-            drive.CurrentLocation = p.Host;
-            if (!string.IsNullOrEmpty(drive.Root))
-            {
-                var values = drive.Root.Split('\\');
-                p.Database = values[0];
-                p.Collection = values.Length > 1 ? values[1] : string.Empty;
-            }
+            p.Host = drive.Root;
+            var joiner = Char.Parse(">");
+            drive.CurrentLocation = $"{p.Database}{joiner}{p.Collection}";
 
             var mongoDrive = new MongoDriveInfo(p, drive);
 
@@ -181,13 +177,22 @@ namespace MongoDbGridFsProvider
 
         protected override bool ItemExists(string id)
         {
+            id = RemovePathPrefix(id);
+
             if (string.IsNullOrEmpty(id))
             {
                 return true;
             }
 
-            var result = Bucket.Find(Builders<GridFSFileInfo>.Filter.Eq("_id", new ObjectId(id))).ToEnumerable();
-            return result.Any();
+            try
+            {
+                var result = Bucket.Find(Builders<GridFSFileInfo>.Filter.Eq("_id", new ObjectId(id))).ToEnumerable();
+                return result.Any();
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         protected override void GetItem(string id)
@@ -197,6 +202,7 @@ namespace MongoDbGridFsProvider
                 throw new ArgumentException("Expected dynamic parameter of type " + typeof(MongoItemParameters).FullName);
             }
 
+            id = RemovePathPrefix(id);
             var item = GetFileInfo(new ObjectId(id));
             WriteItemObject(item, item.Id.ToString(), false);
 
@@ -237,16 +243,22 @@ namespace MongoDbGridFsProvider
 
         protected override void SetItem(string path, object value)
         {
+            path = RemovePathPrefix(path);
             if (File.Exists(path))
             {
                 var id = UploadFile(Bucket, path);
                 WriteItemObject(new PSObject(id), id.Pid.ToString(), false);
                 WriteToConsole(MessageType.Successful, $"Upload successfully by Id '{ id }'");
             }
+            else
+            {
+                WriteToConsole(MessageType.Error, $"File '{ path }' not found.");
+            }
         }
 
         protected override void GetChildItems(string path, bool recurse)
         {
+            path = RemovePathPrefix(path);
             IEnumerable<GridFSFileInfo> result = Bucket.Find(FilterDefinition<GridFSFileInfo>.Empty).ToEnumerable(); // find any file
 
             foreach (var r in result)
@@ -262,11 +274,34 @@ namespace MongoDbGridFsProvider
 
         protected override bool IsItemContainer(string path)
         {
+            path = RemovePathPrefix(path);
             return string.IsNullOrEmpty(path); //Only root-path should show children in collection
+        }
+
+        private string RemovePathPrefix(string path)
+        {
+            InvokeCommand.ToString();
+            var root = Drive.Root + "\\";
+            if (path.StartsWith(root))
+            {
+                path = path.Substring(root.Length);
+            }
+            var currentLocation = Drive.CurrentLocation;
+            if (path.StartsWith(currentLocation))
+            {
+                path = path.Substring(currentLocation.Length);
+            }
+            //path = path.Replace(string.Join("\\", Drive.Root, Drive.CurrentLocation), string.Empty);
+            //path = path.Replace(Drive.DriveParameters.Host, "");
+            //path = path.Replace(Drive.DriveParameters.Database, "");
+            //path = path.Replace(Drive.DriveParameters.Collection, "");
+            //path = path.Replace("\\", "");
+            return path;
         }
 
         protected override string[] ExpandPath(string path)
         {
+            path = RemovePathPrefix(path);
             path = path.Replace('*', '.'); // Powershell wildcard (*) should be (.) in regex
             var regexPattern = $"^{path}.*";
             var result = Bucket.Find(Builders<GridFSFileInfo>.Filter.Regex(x => x.Filename, new BsonRegularExpression(regexPattern))).ToEnumerable();
@@ -284,6 +319,7 @@ namespace MongoDbGridFsProvider
                 throw new ArgumentException("Expected dynamic parameter of type " + typeof(MongoContentParameters).FullName);
             }
 
+            id = RemovePathPrefix(id);
             if (string.IsNullOrEmpty(id) && !string.IsNullOrEmpty(param.Name))
             {
                 GridFSFileInfo newestFile = null;
@@ -321,6 +357,7 @@ namespace MongoDbGridFsProvider
                 throw new ArgumentException("Expected dynamic parameter of type " + typeof(MongoContentParameters).FullName);
             }
 
+            id = RemovePathPrefix(id);
             if (!string.IsNullOrEmpty(id))
             {
                 ThrowTerminatingError(new ErrorRecord(new InvalidOperationException($"MongoDb does not support overwrite a gridfs-entry. Delete existing element first."), "FileAlreadyExist", ErrorCategory.InvalidArgument, null));

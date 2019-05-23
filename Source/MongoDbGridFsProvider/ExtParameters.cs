@@ -12,16 +12,16 @@ namespace MongoDbGridFsProvider
     /// </summary>
     public class MongoProviderParameters
     {
-        [Parameter(Mandatory = true)]
+        [Hidden]
         public string Host { get; set; }
 
-        [Hidden]
+        [Parameter(Mandatory = true)]
         public string Database { get; set; }
 
         [Parameter(Mandatory = false)]
         public int Port { get; set; } = 27017;
 
-        [Hidden]
+        [Parameter(Mandatory = false)]
         public string Collection { get; set; }
 
         [Parameter]
