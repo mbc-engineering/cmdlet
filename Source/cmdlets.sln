@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mbc.Wix", "mbc.Wix\mbc.Wix.
 EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "mbc.DevTools.Setup", "mbc.DevTools.Setup\mbc.DevTools.Setup.wixproj", "{681D20DD-52FC-4EBD-968A-C948CEA26CD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDbGridFsProvider.Test", "MongoDbGridFsProvider.Test\MongoDbGridFsProvider.Test.csproj", "{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MongoDbGridFsProvider.Test", "MongoDbGridFsProvider.Test\MongoDbGridFsProvider.Test.csproj", "{B5788156-BDCB-41D7-B875-8EFAF85F5E5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,6 +38,7 @@ Global
 		{A1B7BFC1-F80D-4A46-BA9E-F5FB25AF6D25}.Debug|x86.ActiveCfg = Debug|x86
 		{A1B7BFC1-F80D-4A46-BA9E-F5FB25AF6D25}.Debug|x86.Build.0 = Debug|x86
 		{A1B7BFC1-F80D-4A46-BA9E-F5FB25AF6D25}.Release|Any CPU.ActiveCfg = Release|x86
+		{A1B7BFC1-F80D-4A46-BA9E-F5FB25AF6D25}.Release|Any CPU.Build.0 = Release|x86
 		{A1B7BFC1-F80D-4A46-BA9E-F5FB25AF6D25}.Release|x64.ActiveCfg = Release|x86
 		{A1B7BFC1-F80D-4A46-BA9E-F5FB25AF6D25}.Release|x86.ActiveCfg = Release|x86
 		{A1B7BFC1-F80D-4A46-BA9E-F5FB25AF6D25}.Release|x86.Build.0 = Release|x86
@@ -46,7 +47,8 @@ Global
 		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Debug|x64.Build.0 = Debug|x64
 		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Debug|x86.ActiveCfg = Debug|x86
 		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Debug|x86.Build.0 = Debug|x86
-		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Release|Any CPU.ActiveCfg = Release|x86
+		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Release|Any CPU.ActiveCfg = Release|x64
+		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Release|Any CPU.Build.0 = Release|x64
 		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Release|x64.ActiveCfg = Release|x64
 		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Release|x64.Build.0 = Release|x64
 		{681D20DD-52FC-4EBD-968A-C948CEA26CD9}.Release|x86.ActiveCfg = Release|x86

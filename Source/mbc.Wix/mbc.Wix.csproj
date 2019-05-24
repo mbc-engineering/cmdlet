@@ -37,6 +37,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.Deployment.WindowsInstaller">
+      <HintPath>$(WixExtDir)\Microsoft.Deployment.WindowsInstaller.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
