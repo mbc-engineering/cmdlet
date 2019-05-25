@@ -1,0 +1,61 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'x64'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@0
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solution)'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solution)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: VSTest@2
+  inputs:
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: CopyFiles@2
+  displayName: 'Copy MSI Setup Files'
+  inputs:
+    Contents: '**/*.msi'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/msi'
+    flattenFolders: true
+
+- task: CopyFiles@2
+  displayName: 'Copy Powershell Module MongoDbGridFsProvider'
+  inputs:
+    SourceFolder: 'Source/MongoDbGridFsProvider/bin/Release'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)/MongoDbGridFsProvider'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish MSI Setup Files'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/msi'
+    ArtifactName: 'msi'
+    publishLocation: 'Container'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Powershell Module MongoDbGridFsProvider'
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)/MongoDbGridFsProvider'
+    ArtifactName: 'MongoDbGridFsProvider'
+    publishLocation: 'Container'

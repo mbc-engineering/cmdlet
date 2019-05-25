@@ -1,5 +1,7 @@
 # PowerShell Cmdlets and Providers
 
+[![Build Status](https://dev.azure.com/mbc-engineering/cmdlet/_apis/build/status/mbc-engineering.cmdlet?branchName=master)](https://dev.azure.com/mbc-engineering/cmdlet/_build/latest?definitionId=1&branchName=master)
+
 Project for extensions like cmdlet or providers for Windows-Powershell.
 
 ## Requirements
