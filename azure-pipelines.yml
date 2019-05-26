@@ -1,4 +1,4 @@
-# Starter pipeline
+# Multi Platform Build for azure build pipeline (https://docs.microsoft.com/en-us/azure/devops/pipelines)
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
@@ -6,13 +6,19 @@
 trigger:
 - master
 
+variables:
+  solution: '**/*.sln'  
+  buildConfiguration: 'Release'
+
+strategy:
+  matrix: 
+    platformX64:
+      buildPlatform: 'x64'
+    platformX86: 
+      buildPlatform: 'x86'
+
 pool:
   vmImage: 'windows-latest'
-
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'x64'
-  buildConfiguration: 'Release'
 
 steps:
 - task: NuGetToolInstaller@0
@@ -42,7 +48,7 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy Powershell Module MongoDbGridFsProvider'
   inputs:
-    SourceFolder: 'Source/MongoDbGridFsProvider/bin/Release'
+    SourceFolder: 'Source/MongoDbGridFsProvider/bin/$(buildConfiguration)'
     Contents: '**'
     TargetFolder: '$(Build.ArtifactStagingDirectory)/MongoDbGridFsProvider'
 
