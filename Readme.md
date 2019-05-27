@@ -19,7 +19,7 @@ This project is an extension for the Windows-Powershell and gives the easy possi
 ### How to use:
 
 Just run the setup to install and register the provider on your system.
-But if you want to try it first, without installation or as portable version, you can import the `MongoDbGridFsProvider.dll` with the ```Import-Module``` by your own.
+But if you want to try it first, without installation or as portable version, you can import the `MongoDbGridFsProvider.psd1` with the ```Import-Module``` by your own.
 
 Check the `MongoDbGridFs` Provider is correctly installed with 
 ```powershell

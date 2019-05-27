@@ -27,6 +27,9 @@
                 <File Id="fil719267529D5B3711AE2560FBEEC4EC7F" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\MongoDbGridFsProvider.dll" />
             </Component>
             
+            <Component Id="cmp7B382D7206236996DB77E6E441799359" Directory="DIR_MongoDbPSProvider" Guid="*">
+                <File Id="filB677BED3C155730444215A040E8C1225" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\MongoDbGridFsProvider.psd1" />
+            </Component>
             <Component Id="cmp2427DC4BCD5A2BB5B0B0616EFA2B82DF" Directory="DIR_MongoDbPSProvider" Guid="*">
                 <File Id="fil5EA34C97DF1B1891D20B9F954917EA5E" KeyPath="yes" Source="$(var.MongoDbGridFsProvider.TargetDir)\System.Buffers.dll" />
             </Component>
