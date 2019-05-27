@@ -74,5 +74,14 @@
       <Version>2.8.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="MongoDbGridFsProvider.psd1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="PostBuild.ps1" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>powershell.exe -ExecutionPolicy Unrestricted -file $(ProjectDir)PostBuild.ps1 -TargetPath $(TargetPath) -TargetDir $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
 </Project>
