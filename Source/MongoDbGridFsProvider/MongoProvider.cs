@@ -223,6 +223,8 @@ namespace MongoDbGridFsProvider
 
         protected override void RemoveItem(string path, bool recurse)
         {
+            path = RemovePathPrefix(path);
+
             var desc = string.Format($"This will remove the document '{ path }' from collection '{ Drive.DriveParameters.Collection }' in database '{ Drive.DriveParameters.Database }'.");
             var warn = string.Format($"Do you want to remove document '{ path }' from collection '{ Drive.DriveParameters.Collection }' in database '{ Drive.DriveParameters.Database }'?");
             if (ShouldProcess(desc, warn, "Removing"))
@@ -280,22 +282,18 @@ namespace MongoDbGridFsProvider
 
         private string RemovePathPrefix(string path)
         {
-            InvokeCommand.ToString();
             var root = Drive.Root + "\\";
             if (path.StartsWith(root))
             {
                 path = path.Substring(root.Length);
             }
+
             var currentLocation = Drive.CurrentLocation;
             if (path.StartsWith(currentLocation))
             {
                 path = path.Substring(currentLocation.Length);
             }
-            //path = path.Replace(string.Join("\\", Drive.Root, Drive.CurrentLocation), string.Empty);
-            //path = path.Replace(Drive.DriveParameters.Host, "");
-            //path = path.Replace(Drive.DriveParameters.Database, "");
-            //path = path.Replace(Drive.DriveParameters.Collection, "");
-            //path = path.Replace("\\", "");
+
             return path;
         }
 
@@ -346,7 +344,6 @@ namespace MongoDbGridFsProvider
 
         public object GetContentReaderDynamicParameters(string path)
         {
-            // Default implementation            
             return new MongoContentParameters();
         }
 
