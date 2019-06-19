@@ -37,7 +37,7 @@ namespace MongoDbGridFsProvider
         }
 
         public void Close() => stream.Close();
-        public void Dispose() => stream.Close();
+        public void Dispose() => stream.Dispose();
         public void Seek(long offset, SeekOrigin origin) { }
     }
 
@@ -52,16 +52,19 @@ namespace MongoDbGridFsProvider
 
         public IList Write(IList content)
         {
-            if (content is object[] o)
+            if (content == null)
             {
-                var bin = Encoding.UTF8.GetBytes(o[0].ToString());
-                stream.Write(bin, 0, bin.Count());
+                return null;
             }
+
+            var bin = Encoding.UTF8.GetBytes(content[0].ToString());
+            stream.Write(bin, 0, bin.Count());
+
             return content;
         }
 
         public void Close() => stream.Close();
-        public void Dispose() => stream.Close();
+        public void Dispose() => stream.Dispose();
         public void Seek(long offset, SeekOrigin origin) { }
     }
 }
