@@ -349,7 +349,7 @@ namespace MongoDbGridFsProvider
 
         public IContentWriter GetContentWriter(string id)
         {
-            if (!(DynamicParameters is MongoContentParameters param))
+            if (!(DynamicParameters is MongoContentWriterParameters param))
             {
                 throw new ArgumentException("Expected dynamic parameter of type " + typeof(MongoContentParameters).FullName);
             }
@@ -357,7 +357,32 @@ namespace MongoDbGridFsProvider
             id = RemovePathPrefix(id);
             if (!string.IsNullOrEmpty(id))
             {
-                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException($"MongoDb does not support overwrite a gridfs-entry. Delete existing element first."), "FileAlreadyExist", ErrorCategory.InvalidArgument, null));
+                ThrowTerminatingError(new ErrorRecord(new InvalidOperationException($"Writing Content to an existing ID is not supported."), "FileAlreadyExist", ErrorCategory.InvalidArgument, null));
+            }
+
+            if (!string.IsNullOrEmpty(param.Name))
+            {
+                // check if name already exists
+                var result = Bucket.Find(Builders<GridFSFileInfo>.Filter.Eq(x => x.Filename, param.Name)).ToList();
+
+                if (result.Count > 0)
+                {
+                    if (param.Overwrite.IsPresent)
+                    {
+                        if (result.Count == 1)
+                        {
+                            Bucket.Delete(result[0].Id);
+                        }
+                        else
+                        {
+                            ThrowTerminatingError(new ErrorRecord(new InvalidOperationException($"More than one entry with the name {param.Name} exists and therefore cannot be overwritten."), "FileAlreadyExist", ErrorCategory.InvalidArgument, null));
+                        }
+                    }
+                    else
+                    {
+                        ThrowTerminatingError(new ErrorRecord(new InvalidOperationException($"A file with the name {param.Name} already exists. Try -Overwrite."), "FileAreadyExist", ErrorCategory.InvalidArgument, null));
+                    }
+                }
             }
 
             return new MongoWriteContentProvider(Bucket, param.Name);
@@ -365,7 +390,7 @@ namespace MongoDbGridFsProvider
 
         public object GetContentWriterDynamicParameters(string path)
         {
-            return new MongoContentParameters();
+            return new MongoContentWriterParameters();
         }
 
         public void ClearContent(string path)

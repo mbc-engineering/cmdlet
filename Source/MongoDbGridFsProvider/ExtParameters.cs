@@ -45,4 +45,10 @@ namespace MongoDbGridFsProvider
         [Parameter(Mandatory = false)]
         public string Name { get; set; }
     }
+
+    public class MongoContentWriterParameters : MongoContentParameters
+    {
+        [Parameter(Mandatory = false)]
+        public SwitchParameter Overwrite { get; set; }
+    }
 }
