@@ -280,16 +280,19 @@ namespace MongoDbGridFsProvider
             return string.IsNullOrEmpty(path); //Only root-path should show children in collection
         }
 
+        /// <summary>
+        /// Removes root and current location from a path if present.
+        /// </summary>
         private string RemovePathPrefix(string path)
         {
             var root = Drive.Root + "\\";
-            if (path.StartsWith(root))
+            if (path.ToLowerInvariant().StartsWith(root.ToLowerInvariant()))
             {
                 path = path.Substring(root.Length);
             }
 
             var currentLocation = Drive.CurrentLocation;
-            if (path.StartsWith(currentLocation))
+            if (path.ToLowerInvariant().StartsWith(currentLocation.ToLowerInvariant()))
             {
                 path = path.Substring(currentLocation.Length);
             }
@@ -299,6 +302,7 @@ namespace MongoDbGridFsProvider
 
         protected override string[] ExpandPath(string path)
         {
+            base.ExpandPath(path);
             path = RemovePathPrefix(path);
             path = path.Replace('*', '.'); // Powershell wildcard (*) should be (.) in regex
             var regexPattern = $"^{path}.*";
