@@ -1,8 +1,8 @@
 # PowerShell Cmdlets and Providers
 
 [![Build Status](https://dev.azure.com/mbc-engineering/cmdlet/_apis/build/status/mbc-engineering.cmdlet?branchName=master)](https://dev.azure.com/mbc-engineering/cmdlet/_build/latest?definitionId=1&branchName=master) 
-![Release Status](https://vsrm.dev.azure.com/mbc-engineering/_apis/public/Release/badge/5110b0e0-fd0e-419b-ad0b-b333689d6fc8/1/1) 
-![](https://img.shields.io/github/license/mbc-engineering/cmdlet.svg)
+[![Release Status](https://vsrm.dev.azure.com/mbc-engineering/_apis/public/Release/badge/5110b0e0-fd0e-419b-ad0b-b333689d6fc8/1/1)](https://dev.azure.com/mbc-engineering/cmdlet/_release?view=mine&definitionId=1)
+[![](https://img.shields.io/github/license/mbc-engineering/cmdlet.svg)](https://github.com/mbc-engineering/cmdlet/blob/master/LICENSE)
 
 Project for extensions like cmdlet or providers for Windows-Powershell.
 
