@@ -3,8 +3,21 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
+# CI Build Trigger
 trigger:
-- master
+  tags:
+    include:
+      - v*
+  branches:
+    include:
+      - master
+
+# Pull Request Trigger
+pr:
+  branches:
+    include:
+      - master
+      - dev
 
 variables:
   solution: '**/*.sln'  
