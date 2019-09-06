@@ -44,12 +44,12 @@ namespace MongoDbGridFsProvider
             });
         }
 
-        private string BuildMongoConnectionString(MongoProviderParameters driveParameters, PSCredential credential = null)
+        private string BuildMongoConnectionString(MongoProviderParameters driveParameters)
         {
             var credentialString = "";
-            if (credential != null)
+            if (Credential != null)
             {
-                credentialString = $"{credential.UserName}:{credential.Password}@";
+                credentialString = $"{Credential.UserName}:{Credential.GetNetworkCredential().Password}@";
             }
 
             var host = driveParameters.Host;
