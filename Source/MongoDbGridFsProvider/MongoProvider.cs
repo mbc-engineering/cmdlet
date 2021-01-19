@@ -118,7 +118,12 @@ namespace MongoDbGridFsProvider
                 ThrowTerminatingError(new ErrorRecord(new ArgumentException($"File exists multiple times in the database."), "MultiIds", ErrorCategory.InvalidArgument, null));
             }
 
-            return items.FirstOrDefault();
+            var item = items.FirstOrDefault();
+            if(item == null)
+            {
+                ThrowTerminatingError(new ErrorRecord(new ArgumentException($"File could not be found in the database."), "NotFoundId", ErrorCategory.InvalidArgument, null));
+            }
+            return item;
         }
 
         private void WriteGridFSFileInfoObject(GridFSFileInfo gridFSFileInfo, string path)

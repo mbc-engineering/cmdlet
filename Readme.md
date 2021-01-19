@@ -42,14 +42,18 @@ WSMan                Credentials                                                
 In order to use the provider, you must first register it.
 
 ```powershell
-> New-PSDrive -PSProvider MongoDbGridFs -Name Mongo -Root 'localhost' -Port '27017' -Database 'MyDb' -Collection 'files' -Verify	
+> New-PSDrive -PSProvider MongoDbGridFs -Name Mongo -Root 'localhost' -Port '27017' -Database 'MyDb' -Collection 'fs.files' -Verify
 ```
 
 Now the provider can simply be addressed by its name.
 
-> The parameters `-Port` and `-Collection` don't have to be set (default Port='27017' and Collection='fs').
+If credentials are required, set the parameter `-Credential` with a PSCredential value. The simplest way is to use a dialog with `Get-Credential -Message "MongoDb login"`
 
-> For collection name the sufix `.files` and `.chunkes` must not be set
+```powershell
+> New-PSDrive -PSProvider MongoDbGridFs -Name Mongo -Root 'localhost' -Port '27017' -Database 'MyDb' -Collection 'fs.files' -Verify -Credential (Get-Credential -Message "MongoDb login")
+```
+
+> The parameters `-Port` and `-Collection` don't have to be set (default Port='27017' and Collection='fs').
 
 #### Remove PSDrive:
 
