@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Copyright (c) 2019 by mbc engineering GmbH, CH-6015 Luzern
+// Author mbc engineering GmbH
 // Licensed under the Apache License, Version 2.0
 //-----------------------------------------------------------------------------
 
