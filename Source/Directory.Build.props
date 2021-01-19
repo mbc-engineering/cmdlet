@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- CSPROJ Reference see: https://docs.microsoft.com/en-us/dotnet/core/tools/csproj -->
+
+  <!-- Release version
+       ############################ -->
+  <PropertyGroup>
+    <Version>1.0.6.0</Version>
+    
+    <Description>A PowerShell Provider for Mongo GridFS</Description>
+    <Product>MongoDbGridFsProvider</Product>
+    <Company>mbc</Company>
+    <Authors>devs @mbc;</Authors>
+    <Copyright>Apache License 2.0</Copyright>
+    <RepositoryUrl>https://github.com/mbc-engineering/cmdlet</RepositoryUrl>
+  </PropertyGroup>
+  
+  
+  <!-- Build configuration Settings 
+       ############################ -->
+  <PropertyGroup>    
+    <TargetFramework>net471</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
+    <!-- Use latest C# Minor Features-->
+    <LangVersion>latest</LangVersion>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Default configuration and Platform pre-selection-->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+  </PropertyGroup>
+  
+</Project>

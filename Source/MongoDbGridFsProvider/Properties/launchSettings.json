@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "MongoDbGridFsProvider": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Windows\\SysWOW64\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "commandLineArgs": "-NoProfile -NoExit -Command \"$InformationPreference = 'Continue'; Import-Module .\\MongoDbGridFsProvider.psd1\""
+    }
+  }
+}
