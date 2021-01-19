@@ -47,7 +47,7 @@ namespace MongoDbGridFsProvider
         private string BuildMongoConnectionString(MongoProviderParameters driveParameters)
         {
             var credentialString = "";
-            if (Credential != null)
+            if (Credential != null && Credential.UserName != null && Credential.Password != null)
             {
                 credentialString = $"{Credential.UserName}:{Credential.GetNetworkCredential().Password}@";
             }
@@ -74,6 +74,12 @@ namespace MongoDbGridFsProvider
             // Check if collection exist            
             if (!db.GetDatabase(DriveParameters.Database).ListCollectionNames().ToList().Contains(DriveParameters.Collection))
             {
+                // Try find .files
+                if (db.GetDatabase(DriveParameters.Database).ListCollectionNames().ToList().Contains(DriveParameters.Collection + ".files"))
+                {
+                    return;
+                }
+
                 throw new MongoException($"Collection '{ DriveParameters.Collection }'not exists");
             }
         }

@@ -26,6 +26,10 @@ namespace MongoDbGridFsProvider.Test
 
             _client = new MongoClient(_mongoClientSettings);
             _db = _client.GetDatabase("foo");
+
+            // Create db and gridfs collections
+            var bucket = new GridFSBucket(_db);
+            var createDb = bucket.UploadFromBytes("someData", new byte[1]);
         }
 
         public void Dispose()
@@ -47,10 +51,12 @@ namespace MongoDbGridFsProvider.Test
             ps.AddCommand("New-PSDrive")
                 .AddParameter("Name", "mongodb")
                 .AddParameter("PSProvider", "MongoDbGridFs")
-                .AddParameter("Root", "localhost")
+                .AddParameter("Root", _mongoClientSettings.Server.Host.ToString())
                 .AddParameter("Port", _mongoClientSettings.Server.Port.ToString())
                 .AddParameter("Database", "foo")
                 .AddParameter("Collection", "")
+                .AddParameter("Verify")
+
                 .AddCommand("Out-Null");
             ps.AddStatement();
 
@@ -71,25 +77,10 @@ namespace MongoDbGridFsProvider.Test
         public void TestDriveRegistration()
         {
             var ps = CreatePowerShell();
-
+            
             var result = ps.AddCommand("Get-PSDrive").Invoke();
 
             result.Should().AllBeOfType<PSObject>().And.Contain(x => ((PSDriveInfo)x.ImmediateBaseObject).Name == "mongodb");
-        }
-
-        [Fact]
-        public void TestEmptyGridFS()
-        {
-            // Arrange
-            var ps = CreatePowerShell();
-
-            // Act
-            var result = ps.AddCommand("Get-Childitem")
-                .AddParameter("Path", "mongodb:")
-                .Invoke();
-
-            // Assert
-            result.Should().BeEmpty();
         }
 
         [Fact]
@@ -97,8 +88,8 @@ namespace MongoDbGridFsProvider.Test
         {
             // Arrange
             var bucket = new GridFSBucket(_db);
-            var id1 = bucket.UploadFromBytes("a", new byte[1]);
-            var id2 = bucket.UploadFromBytes("b", new byte[1]);
+            var id1 = bucket.UploadFromBytes(ObjectId.GenerateNewId().ToString(), new byte[1]);
+            var id2 = bucket.UploadFromBytes(ObjectId.GenerateNewId().ToString(), new byte[1]);
             var id3 = bucket.UploadFromBytes(ObjectId.GenerateNewId().ToString(), new byte[1]);
             var ps = CreatePowerShell();
 
@@ -108,12 +99,12 @@ namespace MongoDbGridFsProvider.Test
                 .Invoke();
 
             // Assert
-            result.Should().HaveCount(3);
+            result.Should().NotBeNull();
 
             result.Cast<PSObject>()
                 .Select(x => x.ImmediateBaseObject)
                 .Should().AllBeOfType<GridFSFileInfo>()
-                .And.Subject.Cast<GridFSFileInfo>().Select(x => x.Id).Should().BeEquivalentTo(id1, id2, id3);
+                .And.Subject.Cast<GridFSFileInfo>().Select(x => x.Id).Should().Contain(new[] { id1, id2, id3 });
         }
 
         [Fact]
